@@ -108,7 +108,7 @@ def temperature_example(regression_GP, optimizer, kernal, params_0):
     ax.set_ylabel("Temperature")
     ax.set_xlabel("Date")
     months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
-    years = [2016 + i for i in xrange(num_years+num_years_out)]
+    years = [2016 + i for i in range(num_years+num_years_out)]
     every_other = 3
     i = 0
     dates = []
