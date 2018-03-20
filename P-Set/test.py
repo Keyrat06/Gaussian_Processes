@@ -129,7 +129,22 @@ def test_sigmoid(sigmoid):
     assert np.allclose(actual, target)
     
     
+def test_calc_W(calc_W):
+    f = [5, 3, 3, 5, 4, -2, -3, -4, -3, -4]
+    y = [1, 1, 1, 1, 1, -1, -1, -1, -1, -1]
+    def sigmoid(x):
+        return 1./(1+np.exp(-x))
     
+    def target_W():
+        n = len(y)
+        W = np.zeros(n)
+        for j in range(n):
+            sigmoid_v = sigmoid(f[j]*y[j])
+            W[j] = y[j]**2 * (1-sigmoid_v)*sigmoid_v
+        return W
+    target = target_W()
+    actual = calc_W(f, y)
+    assert np.allclose(actual, target)
 
     
     
