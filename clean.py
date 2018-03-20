@@ -23,5 +23,4 @@ def clean(file_path):
 			new_file.write(line)
 
 if __name__ == "__main__":
-	print(sys.argv[1])
 	clean(sys.argv[1])
