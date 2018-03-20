@@ -68,7 +68,7 @@ def get_sample_classification_data():
     y[np.where(abs(x)<3)] = 1
     return x, y
 
-def scatter_raw_data(x, y, sigma_n=0.1):
+def scatter_raw_data_classification(x, y, sigma_n=0.1):
     fig, axs = plt.subplots(1, 1)
     axs.set_ylabel("Y")
     axs.set_xlabel("X")
@@ -124,3 +124,4 @@ def temperature_example(regression_GP, optimizer, kernal, params_0):
     fig.set_size_inches((20,8))
     plt.show()
 
+ 
