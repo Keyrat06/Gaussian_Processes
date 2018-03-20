@@ -28,33 +28,33 @@ def test_simple_kernal(kernal):
     assert np.allclose(K, target), "ran kernel(np.array([1,2,3,4,5]), np.array([1,2,3,4,5]), [1, 0.5], 0.2) got {}, wanted {}".format(K, target)    
                       
                       
-def test_periodic_kernal(kernal):
+def test_periodic_kernel(kernel):
     ## Test 1 ##
     x = np.array([1])
-    K = kernal(x, x, [1, 1, 1, 1], 0.1)
+    K = kernel(x, x, [1, 1, 1, 1], 0.1)
     target = np.array([[2.01]])
-    assert np.allclose(K, target), "ran periodic_kernal(np.array([1]), np.array([1]), [1, 1], 0.1) got {}, wanted {}".format(K, target)
+    assert np.allclose(K, target), "ran periodic_kernel(np.array([1]), np.array([1]), [1, 1], 0.1) got {}, wanted {}".format(K, target)
     
     ## Test 2 ##
     x0 = np.array([1,2,3,4,5])
     x1 = np.array([2.5])
-    K = kernal(x0, x1, [1, 1, 1, 1], 0.1)
+    K = kernel(x0, x1, [1, 1, 1, 1], 0.1)
     target = np.array([[0.46134892], [1.51397142], [1.51397142], [0.46134892], [0.53247503]])
-    assert np.allclose(K, target), "ran periodic_kernal(np.array([1,2,3,4,5]), np.array([2.5]), [1, 1, 1, 1], 0.1) got {}, wanted {}".format(K, target)
+    assert np.allclose(K, target), "ran periodic_kernel(np.array([1,2,3,4,5]), np.array([2.5]), [1, 1, 1, 1], 0.1) got {}, wanted {}".format(K, target)
     
     ## Test 3 ##
     x0 = np.array([1,2,3,4,5])
     x1 = np.array([1,2,3,4,5])
-    K = kernal(x0, x1, [1, 0.5, 1, 0.5], 0.2)
+    K = kernel(x0, x1, [1, 0.5, 1, 0.5], 0.2)
     target = np.array([[2.04, 0.7668098, 0.24298264, 0.13669647, 0.19135142],
                        [0.7668098, 2.04, 0.7668098, 0.24298264, 0.13669647],
                        [0.24298264, 0.7668098, 2.04, 0.7668098, 0.24298264],
                        [ 0.13669647, 0.24298264, 0.7668098, 2.04, 0.7668098],
                        [ 0.19135142, 0.13669647, 0.24298264, 0.7668098, 2.04]])
-    assert np.allclose(K, target), "ran kernal(np.array([1,2,3,4,5]), np.array([1,2,3,4,5]), [1, 0.5, 1, 0.5], 0.2) got {}, wanted {}".format(K, target)
+    assert np.allclose(K, target), "ran kernel(np.array([1,2,3,4,5]), np.array([1,2,3,4,5]), [1, 0.5, 1, 0.5], 0.2) got {}, wanted {}".format(K, target)
     
     
-def test_get_Ks(get_Ks, kernal):
+def test_get_Ks(get_Ks, kernel):
     ## Test 1 ##
     x = np.array([1])
     x1 = np.array([1,2,3,4,5])
@@ -71,7 +71,7 @@ def test_get_Ks(get_Ks, kernal):
     assert np.allclose(KS, target_KS)
     assert np.allclose(K, target_K)
     
-def test_regression(regression_GP, kernal):
+def test_regression(regression_GP, kernel):
     ### test 1 ###
     x = np.array([1])
     y = np.sin(x)
