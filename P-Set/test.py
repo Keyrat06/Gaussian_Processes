@@ -114,6 +114,20 @@ def test_regression_ouptimize_theta(regression_optimize_theta, kernel):
 
     assert np.allclose(theta, target), "wanted {}, got {}".format(target, theta)
     
+def test_sigmoid(sigmoid):
+    x = np.linspace(-5, -5, 100)
+    target = [1./(1+np.exp(-x_i)) for x_i in x]
+    actual = [sigmoid(x_i) for x_i in x]
+    assert np.allclose(actual, target)
+    x = np.linspace(-50, -5, 100)
+    target = [1./(1+np.exp(-x_i)) for x_i in x]
+    actual = [sigmoid(x_i) for x_i in x]
+    assert np.allclose(actual, target)
+    x = np.linspace(5, 50, 100)
+    target = [1./(1+np.exp(-x_i)) for x_i in x]
+    actual = [sigmoid(x_i) for x_i in x]
+    assert np.allclose(actual, target)
+    
     
     
 
