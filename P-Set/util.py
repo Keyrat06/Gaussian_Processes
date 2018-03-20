@@ -68,7 +68,6 @@ def get_sample_classification_data():
     y[np.where(abs(x)<2)] = 1
     return x, y
 
-<<<<<<< HEAD
 def scatter_raw_data(x, y, sigma_n=0.1):
     fig, axs = plt.subplots(1, 1)
     axs.set_ylabel("Y")
@@ -85,7 +84,6 @@ def scatter_raw_data(x, y, sigma_n=0.1):
         fig.set_size_inches(size)        
         plt.show()
     
-=======
 def temperature_example(regression_GP, optimizer, kernal, params_0):
     np.random.seed(0)
     sample_std = 2.0
@@ -118,8 +116,6 @@ def temperature_example(regression_GP, optimizer, kernal, params_0):
             if i % every_other == 0:
                 dates.append("{} {}".format(month, year))
             i += 1
->>>>>>> 35b80e22311896e7ac20ef65841f1628e2b43eb4
-
     ax.set_xticks(np.linspace(0,365*(num_years+num_years_out),12*(num_years+num_years_out) / every_other))
     ax.set_xticklabels(dates)
     plt.xlim((0,365*(num_years+num_years_out)))
