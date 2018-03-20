@@ -16,13 +16,15 @@ def pretty_plot(fig, axs, xlim=(-15,15), ylim=(-3,3), size=(16,8)):
     
 
 def get_sample_data_1():
-    x = np.linspace(-5, 5, 15)
-    y = 2*np.sin(x) + x
+    S = 40
+    x = np.array(sorted(np.random.choice(np.linspace(-5, 5, 100), S, replace=False)))
+    y = np.sin(np.pi * x) + 2 * np.sin(np.pi/5 * x) + np.random.normal(0, 0.1, S)
     return x, y
 
-def scatter_raw_data(x, y):
+def scatter_raw_data(x, y, sigma_n=0.1):
     fig, axs = plt.subplots(1, 1)
-    axs.scatter(x, y)
+    for i, _ in enumerate(x):
+        axs.errorbar(x[i], y[i], linewidth=2, marker='o', ms=3, capsize=2, yerr=2*sigma_n, c='b', zorder=3)
     axs.set_ylabel("Y")
     axs.set_xlabel("X")
     axs.set_title("Sample Data")
@@ -32,6 +34,7 @@ def visiualize_kernel(K):
     fig, axs = plt.subplots(1, 1)
     axs.imshow(K)
     fig.set_size_inches((5,5))
+    plt.axis('off')
     plt.show()
     
 def visiualize_Ks(K, KS, KSS):
@@ -40,14 +43,21 @@ def visiualize_Ks(K, KS, KSS):
     new_K = np.vstack((T,B))
     visiualize_kernel(new_K)
     
-def solve_and_visualize(regression_GP, kernel, x, y, theta):
-    x_range = (min(x)-1, max(x)+1)
-    y_range = (min(y)-1, max(y)+1)
+def solve_and_visualize(regression_GP, kernel, x, y, theta, x_range=None, y_range=None):
+    if x_range is None: x_range = (min(x)-1, max(x)+1)
+    if y_range is None: y_range = (min(y)-1, max(y)+1)
     x_new = np.linspace(x_range[0], x_range[1], 100)
     y_bar, var = regression_GP(x_new, x, y, kernel, theta)
     y_low, y_high = get_low_and_high(y_bar, var)
     
     fig, axs = plt.subplots(1, 1)
+    axs.fill_between(x_new, y_low, y_high, facecolor='r', alpha=0.5,zorder=1)
+    axs.plot(x_new,y_bar,c="k",zorder=2)
+    for i, _ in enumerate(x):
+        axs.errorbar(x[i], y[i], linewidth=2, marker='o', ms=3, capsize=2, yerr=2*theta[-1], c='b', zorder=3)
+        
+    pretty_plot(fig, axs, xlim=x_range, ylim=y_range)
+
     
 
     
