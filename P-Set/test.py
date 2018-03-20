@@ -2,7 +2,7 @@ import util
 import numpy as np
 import math
 
-def test_simple_kernal(kernal):
+def test_simple_kernel(kernel):
     ## Test 1 ##
     x = np.array([1])
     K = kernel(x, x, [1, 1], 0.1)
@@ -12,9 +12,9 @@ def test_simple_kernal(kernal):
     ## Test 2 ##
     x0 = np.array([1,2,3,4,5])
     x1 = np.array([2.5])
-    K = kernal(x0, x1, [1, 1], 0.1)
+    K = kernel(x0, x1, [1, 1], 0.1)
     target = np.array([[ 0.32465247], [ 0.8824969 ], [ 0.8824969 ], [ 0.32465247], [ 0.04393693]])
-    assert np.allclose(K, target), "ran kernal(np.array([1,2,3,4,5]), np.array([2.5]), [1, 1], 0.1) got {}, wanted {}".format(K, target)
+    assert np.allclose(K, target), "ran kernel(np.array([1,2,3,4,5]), np.array([2.5]), [1, 1], 0.1) got {}, wanted {}".format(K, target)
     
     ## Test 3 ##
     x0 = np.array([1,2,3,4,5])
@@ -110,7 +110,7 @@ def test_regression_ouptimize_theta(regression_optimize_theta, kernel):
     y = np.sin(x) + np.sin(x/5)
     sigma_n = 0.1
     theta = np.array(regression_optimize_theta(x, y, sigma_n, kernel, params_0=[0.1, 0.1]))
-    target = np.array([0.94208596248476884, -1.833617068532752, 0.1])
+    target = np.array([1.39545862,  2.21679695, 0.1])
 
     assert np.allclose(theta, target), "wanted {}, got {}".format(target, theta)
     
