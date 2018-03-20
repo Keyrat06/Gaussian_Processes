@@ -1,6 +1,6 @@
 import util
 import numpy as np
-
+import math
 
 def test_simple_kernel(kernel):
     ## Test 1 ##
@@ -25,8 +25,7 @@ def test_simple_kernel(kernel):
                        [3.35462628e-04, 1.35335283e-01, 1.04000000e+00, 1.35335283e-01, 3.35462628e-04],
                        [1.52299797e-08, 3.35462628e-04, 1.35335283e-01, 1.04000000e+00, 1.35335283e-01],
                        [1.26641655e-14, 1.52299797e-08, 3.35462628e-04, 1.35335283e-01, 1.04000000e+00]])
-    assert np.allclose(K, target), "ran kernel(np.array([1,2,3,4,5]), np.array([1,2,3,4,5]), [1, 0.5], 0.2) got {}, wanted {}".format(K, target)
-    
+    assert np.allclose(K, target), "ran kernel(np.array([1,2,3,4,5]), np.array([1,2,3,4,5]), [1, 0.5], 0.2) got {}, wanted {}".format(K, target)    
                       
                       
 def test_periodic_kernel(kernel):
@@ -95,9 +94,7 @@ def test_regression(regression_GP, kernel):
     target_y_samples = np.array([-7.41809101e-01, -8.41470985e-01, -3.91615754e-16, 4.79425539e-01, 8.41470985e-01, 5.12639003e-01])
     target_var = np.array([1.52675208e-01, 0.00000000e+00, 1.11022302e-15, 4.44089210e-16, 0.00000000e+00, 5.30945273e-01])
     assert np.allclose(y_samples, target_y_samples), "wanted {}, got {}".format(target_y_samples, y_samples)
-    assert np.allclose(var, target_var), "wanted {}, got {}".format(target_var, var)
-
-    
+    assert np.allclose(var, target_var), "wanted {}, got {}".format(target_var, var)    
     
 def test_regression_ouptimize_theta(regression_optimize_theta, kernel):
     ### test 1 ###
