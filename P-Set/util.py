@@ -49,13 +49,10 @@ def solve_and_visualize(regression_GP, kernel, x, y, theta):
     
     fig, axs = plt.subplots(1, 1)
     
-
-    
-    
 def get_sample_classification_data():
-    x_1 = np.random.choice(np.linspace(-11, -9, 100), 5, replace=False)
+    x_1 = np.random.choice(np.linspace(-10, -8, 100), 5, replace=False)
     x_2 = np.random.choice(np.linspace(-1, 1, 100), 5, replace=False)
-    x_3 = np.random.choice(np.linspace(9, 11, 100), 5, replace=False)
+    x_3 = np.random.choice(np.linspace(8, 10, 100), 5, replace=False)
     x = np.concatenate((x_1, x_2, x_3), axis=0)
     y = -1 * np.ones(len(x))
     y[np.where(abs(x)<2)] = 1
