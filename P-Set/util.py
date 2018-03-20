@@ -58,5 +58,6 @@ def get_sample_classification_data():
     x_3 = np.random.choice(np.linspace(9, 11, 100), 5, replace=False)
     x = np.concatenate((x_1, x_2, x_3), axis=0)
     y = -1 * np.ones(len(x))
+    y[np.where(abs(x)<2)] = 1
     return x, y
 
