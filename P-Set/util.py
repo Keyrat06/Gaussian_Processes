@@ -60,14 +60,31 @@ def solve_and_visualize(regression_GP, kernel, x, y, theta, x_range=None, y_rang
 
     
 def get_sample_classification_data():
-    x_1 = np.random.choice(np.linspace(-10, -8, 100), 5, replace=False)
-    x_2 = np.random.choice(np.linspace(-1, 1, 100), 5, replace=False)
-    x_3 = np.random.choice(np.linspace(8, 10, 100), 5, replace=False)
+    x_1 = np.random.choice(np.linspace(-10, -5, 20), 5, replace=False)
+    x_2 = np.random.choice(np.linspace(-2.5, 2.5, 20), 5, replace=False)
+    x_3 = np.random.choice(np.linspace(5, 10, 20), 5, replace=False)
     x = np.concatenate((x_1, x_2, x_3), axis=0)
     y = -1 * np.ones(len(x))
-    y[np.where(abs(x)<2)] = 1
+    y[np.where(abs(x)<3)] = 1
     return x, y
 
+def scatter_raw_data_classification(x, y, sigma_n=0.1):
+    fig, axs = plt.subplots(1, 1)
+    axs.set_ylabel("Y")
+    axs.set_xlabel("X")
+    axs.set_title("Sample Data")
+    for i in range(len(x)):
+        if y[i] > 0:
+            axs.scatter(x[i], y[i], 50, marker='+', color='g')
+        else:
+            axs.scatter(x[i], y[i], 50, marker='o', color='r')
+    def pretty_plot_classification(fig, axs, xlim=(-15,15), ylim=(-3,3), size=(16,8)):
+        plt.ylim(ylim)
+        plt.xlim(xlim)
+        fig.set_size_inches(size)        
+        plt.show()
+    pretty_plot_classification(fig, axs)
+    
 def temperature_example(regression_GP, optimizer, kernal, params_0):
     np.random.seed(0)
     sample_std = 2.0
@@ -100,7 +117,6 @@ def temperature_example(regression_GP, optimizer, kernal, params_0):
             if i % every_other == 0:
                 dates.append("{} {}".format(month, year))
             i += 1
-
     ax.set_xticks(np.linspace(0,365*(num_years+num_years_out),12*(num_years+num_years_out) / every_other))
     ax.set_xticklabels(dates)
     plt.xlim((0,365*(num_years+num_years_out)))
@@ -108,3 +124,4 @@ def temperature_example(regression_GP, optimizer, kernal, params_0):
     fig.set_size_inches((20,8))
     plt.show()
 
+ 
