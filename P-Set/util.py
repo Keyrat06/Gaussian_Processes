@@ -40,3 +40,11 @@ def visiualize_Ks(K, KS, KSS):
     new_K = np.vstack((T,B))
     visiualize_kernal(new_K)
     
+def get_sample_classification_data():
+    x_1 = np.random.choice(np.linspace(-11, -9, 100), 5, replace=False)
+    x_2 = np.random.choice(np.linspace(-1, 1, 100), 5, replace=False)
+    x_3 = np.random.choice(np.linspace(9, 11, 100), 5, replace=False)
+    x = np.concatenate((x_1, x_2, x_3), axis=0)
+    y = -1 * np.ones(len(x))
+    return x, y
+
