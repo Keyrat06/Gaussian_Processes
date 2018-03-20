@@ -113,7 +113,7 @@ def test_regression_ouptimize_theta(regression_optimize_theta, kernel):
     y = np.sin(x) + np.sin(x/5)
     sigma_n = 0.1
     theta = np.array(regression_optimize_theta(x, y, sigma_n, kernel, params_0=[0.1, 0.1]))
-    target = np.array([0.94208596248476884, -1.833617068532752, 0.1])
+    target = np.array([1.39545862,  2.21679695, 0.1])
 
     assert np.allclose(theta, target), "wanted {}, got {}".format(target, theta)
     
