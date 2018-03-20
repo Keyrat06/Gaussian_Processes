@@ -28,7 +28,7 @@ def scatter_raw_data(x, y):
     axs.set_title("Sample Data")
     pretty_plot(fig, axs, xlim=(min(x)-1, max(x)+1), ylim=(min(y)-1, max(y)+1))
     
-def visiualize_kernal(K):
+def visiualize_kernel(K):
     fig, axs = plt.subplots(1, 1)
     axs.imshow(K)
     fig.set_size_inches((5,5))
@@ -38,5 +38,17 @@ def visiualize_Ks(K, KS, KSS):
     T = np.hstack((K, KS.T))
     B = np.hstack((KS, KSS))
     new_K = np.vstack((T,B))
-    visiualize_kernal(new_K)
+    visiualize_kernel(new_K)
+    
+def solve_and_visualize(regression_GP, kernel, x, y, theta):
+    x_range = (min(x)-1, max(x)+1)
+    y_range = (min(y)-1, max(y)+1)
+    x_new = np.linspace(x_range[0], x_range[1], 100)
+    y_bar, var = regression_GP(x_new, x, y, kernel, theta)
+    y_low, y_high = get_low_and_high(y_bar, var)
+    
+    fig, axs = plt.subplots(1, 1)
+    
+
+    
     
