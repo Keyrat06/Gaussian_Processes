@@ -32,9 +32,10 @@ def scatter_raw_data(x, y, sigma_n=0.1):
     
 def visiualize_kernel(K):
     fig, axs = plt.subplots(1, 1)
-    axs.imshow(K)
+    im = axs.imshow(K)
     fig.set_size_inches((5,5))
     plt.axis('off')
+    plt.colorbar(im)
     plt.show()
     
 def visiualize_Ks(K, KS, KSS):
