@@ -115,141 +115,58 @@ def test_regression_ouptimize_theta(regression_optimize_theta, kernel):
 
     assert np.allclose(theta, target), "wanted {}, got {}".format(target, theta)
     
-x_1 = np.random.choice(np.linspace(-10, -5, 20), 5, replace=False)
-x_2 = np.random.choice(np.linspace(-2.5, 2.5, 20), 5, replace=False)
-x_3 = np.random.choice(np.linspace(5, 10, 20), 5, replace=False)
-x_new = np.linspace(-15, 15, 50)
-x_data = np.concatenate((x_1, x_2, x_3), axis=0)
-y_data = -1 * np.ones(len(x_data))
-y_data[np.where(abs(x_data)<3)] = 1 
+x_1 = np.random.choice(np.linspace(-10, -5, 20), 2, replace=False)
+x_2 = np.random.choice(np.linspace(-2.5, 2.5, 20), 2, replace=False)
+x_3 = np.random.choice(np.linspace(5, 10, 20), 2, replace=False)
+x_new = [-15,  15]
+x_data = [-5.78947368, -9.47368421, -1.18421053,  1.71052632, 9.47368421,  7.63157895]
+y_data = [-1., -1.,  1., 1., -1., -1.]
 theta_c = [0.4, 5, 0]
 
-def target_kernel(x0, x1, params, sigma_n):
-    diff = np.subtract.outer(x0, x1)
-    value = params[0]**2 * np.exp( -0.5 * (1.0/params[1]**2) * diff**2)
-    value[np.where(diff == 0.0)] += sigma_n**2
-    return value
 
-def target_get_Ks(x_new, x, kernel, theta):
-    K = kernel(x, x, theta[:-1], theta[-1]) # K
-    KS = kernel(x_new, x, theta[:-1], theta[-1]) # K*
-    KSS = kernel(x_new, x_new, theta[:-1], theta[-1]) # K**
-    return K, KS, KSS
+target_f = [-0.06166098, -0.10890729,  0.05013205,  0.05210839, -0.11601532, -0.09386948]
+target_y_giv_f = [0.51541036, 0.52719994, 0.51253039, 0.51302415, 0.52897134, 0.52345015]
 
-K_target, KS_target, KSS_target = target_get_Ks(x_new, x_data, target_kernel, theta_c)
+target_W = [0.2497625207314578, 0.24926016306867302, 0.24984298939288468, 0.2498303715013012, 0.24916066126622347, 0.24945009027075377]
 
-def target_sigmoid(x):
-    return 1./(1+np.exp(-x))
+target_KP = np.array([[4.16380328, 4.13383406, 4.10720388, 4.05466029, 4.01499038, 4.01317886], [4.12576481, 4.17187253, 4.04299611, 4.01582678, 4.01359652, 4.00927791], [4.10849341, 4.05235489, 4.16251375, 4.13802798, 4.02997464, 4.04262979], [4.05574768, 4.02498341, 4.13782582, 4.1627159,  4.06140944, 4.08817812], [4.00531901, 4.01199439, 4.01901373, 4.05065068, 4.17347466, 4.1583195 ], [4.00816419, 4.01233248, 4.03632558, 4.08207606, 4.16297621, 4.16881795]])
+
+target_f_bar = [-0.05327797, -0.06398023]
+target_var = [0.09498563, 0.08308049]
+
+target_theta = [2.3692682050235465, -0.3004754526488485, 0.1]
     
 def test_sigmoid(sigmoid):
-    x = np.linspace(-5, -5, 100)
-    target = [target_sigmoid(x_i) for x_i in x]
+    x = [-10.0, -9.797979797979798, -9.595959595959595, -9.393939393939394, -9.191919191919192, -8.98989898989899, -8.787878787878787, -8.585858585858587, -8.383838383838384, -8.181818181818182, -7.979797979797979, -7.777777777777778, -7.575757575757576, -7.373737373737374, -7.171717171717171, -6.96969696969697, -6.767676767676768, -6.565656565656566, -6.363636363636363, -6.161616161616162, -5.959595959595959, -5.757575757575758, -5.555555555555555, -5.353535353535354, -5.151515151515151, -4.94949494949495, -4.747474747474747, -4.545454545454546, -4.343434343434343, -4.141414141414142, -3.9393939393939394, -3.737373737373738, -3.5353535353535355, -3.333333333333333, -3.1313131313131315, -2.929292929292929, -2.7272727272727275, -2.525252525252525, -2.3232323232323235, -2.121212121212121, -1.9191919191919187, -1.717171717171718, -1.5151515151515156, -1.3131313131313131, -1.1111111111111107, -0.9090909090909101, -0.7070707070707076, -0.5050505050505052, -0.30303030303030276, -0.10101010101010033, 0.10101010101010033, 0.30303030303030276, 0.5050505050505052, 0.7070707070707076, 0.9090909090909083, 1.1111111111111107, 1.3131313131313131, 1.5151515151515156, 1.7171717171717162, 1.9191919191919187, 2.121212121212121, 2.3232323232323235, 2.525252525252524, 2.7272727272727266, 2.929292929292929, 3.1313131313131315, 3.333333333333334, 3.5353535353535346, 3.737373737373737, 3.9393939393939394, 4.141414141414142, 4.3434343434343425, 4.545454545454545, 4.747474747474747, 4.94949494949495, 5.1515151515151505, 5.353535353535353, 5.555555555555555, 5.757575757575758, 5.9595959595959584, 6.161616161616163, 6.363636363636363, 6.565656565656564, 6.767676767676768, 6.969696969696969, 7.171717171717173, 7.373737373737374, 7.575757575757574, 7.777777777777779, 7.979797979797979, 8.18181818181818, 8.383838383838384, 8.585858585858585, 8.787878787878789, 8.98989898989899, 9.19191919191919, 9.393939393939394, 9.595959595959595, 9.7979797979798, 10.0]
+    target = [4.5397868702434395e-05, 5.556064893935847e-05, 6.7998317442358e-05, 8.322001972209245e-05, 0.00010184881542721271, 0.00012464714594414533, 0.00015254798624649647, 0.00018669294496130814, 0.00022847885532128418, 0.0002796147386491923, 0.00034219143371662803, 0.0004187666844443735, 0.0005124690821944584, 0.0006271249872756847, 0.000767413429918266, 0.0009390550390618305, 0.001149042294880872, 0.0014059198755086322, 0.0017201255952192596, 0.0021044044291184333, 0.0025743103931375314, 0.0031488135776798513, 0.003851032355930255, 0.004709113572114011, 0.0057572861219081835, 0.007037115364564376, 0.008598986610189428, 0.010503844513285416, 0.012825210092764685, 0.015651486142818367, 0.019088541989923387, 0.0232625358308855, 0.0283228820443032, 0.03444519566621118, 0.04183394000551971, 0.05072436056205437, 0.06138310740349217, 0.07410673632504733, 0.08921706025119844, 0.10705214621417715, 0.12795170492445268, 0.15223582314389053, 0.18017659335766972, 0.21196333386923713, 0.2476638011390717, 0.28718590138250244, 0.33024642963181144, 0.37635451749670706, 0.42481686806284763, 0.4747689239079115, 0.5252310760920885, 0.5751831319371523, 0.623645482503293, 0.6697535703681886, 0.7128140986174972, 0.7523361988609284, 0.7880366661307628, 0.8198234066423302, 0.8477641768561092, 0.8720482950755473, 0.8929478537858229, 0.9107829397488015, 0.9258932636749527, 0.9386168925965077, 0.9492756394379457, 0.9581660599944802, 0.9655548043337889, 0.9716771179556968, 0.9767374641691144, 0.9809114580100765, 0.9843485138571816, 0.9871747899072354, 0.9894961554867145, 0.9914010133898106, 0.9929628846354357, 0.9942427138780918, 0.995290886427886, 0.9961489676440697, 0.9968511864223202, 0.9974256896068625, 0.9978955955708816, 0.9982798744047808, 0.9985940801244912, 0.9988509577051191, 0.9990609449609381, 0.9992325865700818, 0.9993728750127243, 0.9994875309178055, 0.9995812333155556, 0.9996578085662833, 0.9997203852613508, 0.9997715211446788, 0.9998133070550387, 0.9998474520137535, 0.9998753528540559, 0.9998981511845727, 0.999916779980278, 0.9999320016825577, 0.9999444393510606, 0.9999546021312976]
     actual = [sigmoid(x_i) for x_i in x]
     assert np.allclose(actual, target)
-    x = np.linspace(-50, -5, 100)
-    target = [target_sigmoid(x_i) for x_i in x]
-    actual = [sigmoid(x_i) for x_i in x]
-    assert np.allclose(actual, target)
-    x = np.linspace(5, 50, 100)
-    target = [target_sigmoid(x_i) for x_i in x]
-    actual = [sigmoid(x_i) for x_i in x]
-    assert np.allclose(actual, target)
-    
-def target_find_f(K, y):
-    n = len(y) 
-    f = np.zeros(n)  
-    y_giv_f = np.zeros(n)
-    grad = np.zeros(n)
-    
-    for i in range(0, 100):
-        for j in range(n):
-            y_giv_f[j] = target_sigmoid(f[j]*y[j])
-            grad[j] = (1-y_giv_f[j])*y[j]
-        f = np.array(np.matmul(K, grad)).flatten()
-    for j in range(n):
-        y_giv_f[j] = target_sigmoid(f[j]*y[j])
-    return f, y_giv_f
     
 def test_find_f(find_f, get_Ks, kernel):
-    target_f, target_y_giv_f = target_find_f(K_target, y_data)
     K, KS, KSS = get_Ks(x_new, x_data, kernel, theta_c)
     actual_f, actual_y_giv_f = find_f(K, y_data)
     assert np.allclose(K_target, K)
     assert np.allclose(target_f, actual_f)
     assert np.allclose(target_y_giv_f, actual_y_giv_f)
-    return actual_f, actual_y_giv_f
-    
-def target_W(f, y):
-    n = len(y)
-    W = np.zeros(n)
-    for j in range(n):
-        sigmoid_v = target_sigmoid(f[j]*y[j])
-        W[j] = y[j]**2 * (1-sigmoid_v)*sigmoid_v
-    return W
     
 def test_calc_W(calc_W, find_f, get_Ks, kernel):
-    target_f, target_y_giv_f = target_find_f(K_target, y_data)
     K, KS, KSS = get_Ks(x_new, x_data, kernel, theta_c)
     actual_f, actual_y_giv_f = find_f(K, y_data)
-    target = target_W(target_f, y_data)
-    actual = calc_W(actual_f, y_data)
-    assert np.allclose(actual, target)
-    return actual
-
-def target_KP(K, W):
-    return K + (1.0/W)
+    actual = list(calc_W(actual_f, y_data))
+    assert np.allclose(actual, target_W)
 
 def test_calc_KP(calculate_KP, calc_W, find_f, get_Ks, kernel):
-    target_f, target_y_giv_f = target_find_f(K_target, y_data)
     K, KS, KSS = get_Ks(x_new, x_data, kernel, theta_c)
     actual_f, actual_y_giv_f = find_f(K, y_data)
-    W_target = target_W(target_f, y_data)
     W_actual = calc_W(actual_f, y_data)
     actual = calculate_KP(K, W_actual)
-    target = target_KP(K_target, W_target)    
-    assert np.allclose(actual, target)
-    return actual
-
-def target_GPC(x_new, x, y, kernel, theta):
-    K = kernel(x, x, theta[:-1], theta[-1]) # K
-    KS = kernel(x_new, x, theta[:-1], theta[-1]) # K*
-    KSS = kernel(x_new, x_new, theta[:-1], theta[-1]) # K**
-    
-    f, y_giv_f = target_find_f(K, y)
-    W = target_W(f, y)
-    
-    KP = target_KP(K, W)
-
-    f_bar = np.matmul(np.matmul(KS, np.linalg.inv(K)), f)    
-    var = KSS - KS.dot(np.linalg.inv(KP).dot(KS.T))
-    var = np.diagonal(var)
-    return(f_bar.squeeze(), var.squeeze())
+    assert np.allclose(actual, target_KP)
     
 def test_GPC(GPC, calculate_KP, calc_W, find_f, get_Ks, kernel):
-    target_f, target_var = target_GPC(x_new, x_data, y_data, target_kernel, theta_c)
     actual_f, actual_var = GPC(x_new, x_data, y_data, kernel, theta_c)
-    assert np.allclose(actual_f, target_f)
+    assert np.allclose(actual_f, target_f_bar)
     assert np.allclose(actual_var, target_var)
-    return actual_f, actual_var
-
-def target_optimize_theta(x, y, kernel, params_0=[0.1, 0.1], sigma_n=0.1):
-    def log_pY(theta):
-        K = np.matrix(target_kernel(x, x, theta, sigma_n))
-        f, y_giv_f = target_find_f(K, y)
-        W = target_W(f, y)
-        inv_k = np.linalg.inv(K)
-        log_k = np.log(np.linalg.det(K) * np.linalg.det(inv_k+W))
-        Y_giv_f = np.prod(y_giv_f)
-        output = 0.5 * np.matmul(np.matmul(f.T, inv_k),f)
-        output += 0.5 * log_k
-        output -= np.log(Y_giv_f)
-        return output
-
-    res = minimize(log_pY, params_0, method='nelder-mead', options={'xtol': 1e-8, 'disp': False})
-    return list(res.x) + [sigma_n]
     
 def test_optimize_theta(optimize_theta, kernel):
     actual = optimize_theta(x_data, y_data, kernel)
-    target = target_optimize_theta(x_data, y_data, target_kernel)
-    assert np.allclose(actual, target)
-    return actual
+    assert np.allclose(actual, target_theta)
