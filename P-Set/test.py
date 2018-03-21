@@ -1,6 +1,7 @@
 import util
 import numpy as np
 import math
+from scipy.optimize import minimize
 
 def test_simple_kernel(kernel):
     ## Test 1 ##
@@ -186,21 +187,69 @@ def target_W(f, y):
         W[j] = y[j]**2 * (1-sigmoid_v)*sigmoid_v
     return W
     
-def test_calc_W(calc_W):
-    f_target = target_find_f(K_target, y_data)
-    f_actual = test_find_f(find_f, K)
-    target = target_W(f_target, y_data)
-    actual = calc_W(f_actual, y_data)
+def test_calc_W(calc_W, find_f, get_Ks, kernel):
+    target_f, target_y_giv_f = target_find_f(K_target, y_data)
+    K, KS, KSS = get_Ks(x_new, x_data, kernel, theta_c)
+    actual_f, actual_y_giv_f = find_f(K, y_data)
+    target = target_W(target_f, y_data)
+    actual = calc_W(actual_f, y_data)
     assert np.allclose(actual, target)
+    return actual
 
+def target_KP(K, W):
+    return K + (1.0/W)
 
+def test_calc_KP(calculate_KP, calc_W, find_f, get_Ks, kernel):
+    target_f, target_y_giv_f = target_find_f(K_target, y_data)
+    K, KS, KSS = get_Ks(x_new, x_data, kernel, theta_c)
+    actual_f, actual_y_giv_f = find_f(K, y_data)
+    W_target = target_W(target_f, y_data)
+    W_actual = calc_W(actual_f, y_data)
+    actual = calculate_KP(K, W_actual)
+    target = target_KP(K_target, W_target)    
+    assert np.allclose(actual, target)
+    return actual
+
+def target_GPC(x_new, x, y, kernel, theta):
+    K = kernel(x, x, theta[:-1], theta[-1]) # K
+    KS = kernel(x_new, x, theta[:-1], theta[-1]) # K*
+    KSS = kernel(x_new, x_new, theta[:-1], theta[-1]) # K**
     
+    f, y_giv_f = target_find_f(K, y)
+    W = target_W(f, y)
     
+    KP = target_KP(K, W)
+
+    f_bar = np.matmul(np.matmul(KS, np.linalg.inv(K)), f)    
+    var = KSS - KS.dot(np.linalg.inv(KP).dot(KS.T))
+    var = np.diagonal(var)
+    return(f_bar.squeeze(), var.squeeze())
     
+def test_GPC(GPC, calculate_KP, calc_W, find_f, get_Ks, kernel):
+    target_f, target_var = target_GPC(x_new, x_data, y_data, target_kernel, theta_c)
+    actual_f, actual_var = GPC(x_new, x_data, y_data, kernel, theta_c)
+    assert np.allclose(actual_f, target_f)
+    assert np.allclose(actual_var, target_var)
+    return actual_f, actual_var
+
+def target_optimize_theta(x, y, kernel, params_0=[0.1, 0.1], sigma_n=0.1):
+    def log_pY(theta):
+        K = np.matrix(target_kernel(x, x, theta, sigma_n))
+        f, y_giv_f = target_find_f(K, y)
+        W = target_W(f, y)
+        inv_k = np.linalg.inv(K)
+        log_k = np.log(np.linalg.det(K) * np.linalg.det(inv_k+W))
+        Y_giv_f = np.prod(y_giv_f)
+        output = 0.5 * np.matmul(np.matmul(f.T, inv_k),f)
+        output += 0.5 * log_k
+        output -= np.log(Y_giv_f)
+        return output
+
+    res = minimize(log_pY, params_0, method='nelder-mead', options={'xtol': 1e-8, 'disp': False})
+    return list(res.x) + [sigma_n]
     
-    
-    
-    
-    
-    
-    
+def test_optimize_theta(optimize_theta, kernel):
+    actual = optimize_theta(x_data, y_data, kernel)
+    target = target_optimize_theta(x_data, y_data, target_kernel)
+    assert np.allclose(actual, target)
+    return actual
