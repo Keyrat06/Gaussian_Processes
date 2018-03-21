@@ -114,7 +114,14 @@ def test_regression_ouptimize_theta(regression_optimize_theta, kernel):
     target = np.array([1.39545862,  2.21679695, 0.1])
 
     assert np.allclose(theta, target), "wanted {}, got {}".format(target, theta)
+
     
+    
+    
+    
+    
+#CLASSIFICATION
+
 x_1 = np.random.choice(np.linspace(-10, -5, 20), 2, replace=False)
 x_2 = np.random.choice(np.linspace(-2.5, 2.5, 20), 2, replace=False)
 x_3 = np.random.choice(np.linspace(5, 10, 20), 2, replace=False)
@@ -123,6 +130,7 @@ x_data = [-5.78947368, -9.47368421, -1.18421053,  1.71052632, 9.47368421,  7.631
 y_data = [-1., -1.,  1., 1., -1., -1.]
 theta_c = [0.4, 5, 0]
 
+K_target = np.array([[1.60000000e-01, 1.21961530e-01, 1.04690130e-01, 5.19443948e-02, 1.51572525e-03, 4.36090996e-03], [1.21961530e-01, 1.60000000e-01, 4.04823606e-02, 1.31108812e-02, 1.21860103e-04, 4.59954945e-04], [1.04690130e-01, 4.04823606e-02, 1.60000000e-01, 1.35312076e-01, 1.64999840e-02, 3.38118365e-02], [5.19443948e-02, 1.31108812e-02, 1.35312076e-01, 1.60000000e-01, 4.79347833e-02, 7.93601641e-02], [1.51572525e-03, 1.21860103e-04, 1.64999840e-02, 4.79347833e-02, 1.60000000e-01, 1.49501553e-01], [4.36090996e-03, 4.59954945e-04, 3.38118365e-02, 7.93601641e-02, 1.49501553e-01, 1.60000000e-01]])
 
 target_f = [-0.06166098, -0.10890729,  0.05013205,  0.05210839, -0.11601532, -0.09386948]
 target_y_giv_f = [0.51541036, 0.52719994, 0.51253039, 0.51302415, 0.52897134, 0.52345015]
@@ -149,20 +157,7 @@ def test_find_f(find_f, get_Ks, kernel):
     assert np.allclose(target_f, actual_f)
     assert np.allclose(target_y_giv_f, actual_y_giv_f)
     
-def test_calc_W(calc_W, find_f, get_Ks, kernel):
-    K, KS, KSS = get_Ks(x_new, x_data, kernel, theta_c)
-    actual_f, actual_y_giv_f = find_f(K, y_data)
-    actual = list(calc_W(actual_f, y_data))
-    assert np.allclose(actual, target_W)
-
-def test_calc_KP(calculate_KP, calc_W, find_f, get_Ks, kernel):
-    K, KS, KSS = get_Ks(x_new, x_data, kernel, theta_c)
-    actual_f, actual_y_giv_f = find_f(K, y_data)
-    W_actual = calc_W(actual_f, y_data)
-    actual = calculate_KP(K, W_actual)
-    assert np.allclose(actual, target_KP)
-    
-def test_GPC(GPC, calculate_KP, calc_W, find_f, get_Ks, kernel):
+def test_GPC(GPC, kernel):
     actual_f, actual_var = GPC(x_new, x_data, y_data, kernel, theta_c)
     assert np.allclose(actual_f, target_f_bar)
     assert np.allclose(actual_var, target_var)

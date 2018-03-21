@@ -14,7 +14,6 @@ def pretty_plot(fig, axs, xlim=(-15,15), ylim=(-3,3), size=(16,8)):
     fig.set_size_inches(size)
     plt.show()
     
-
 def get_sample_data_1():
     S = 40
     x = np.array(sorted(np.random.choice(np.linspace(-5, 5, 100), S, replace=False)))
@@ -134,4 +133,18 @@ def draw_sigmoid(sigmoid_function):
     axs.set_ylabel("Sigmoid(X)")
     axs.set_xlabel("X")
     pretty_plot(fig, axs, xlim=(-10,10), ylim=(0,1))
+    
+def sigmoid(x):
+    return 1./(1+np.exp(-x))
+
+def calculate_W(f, y):
+    n = len(y)
+    W = np.zeros(n)
+    for j in range(n):
+        sigmoid_v = sigmoid(f[j]*y[j])
+        W[j] = y[j]**2 * (1-sigmoid_v)*sigmoid_v
+    return W
+
+def calculate_KP(K, W):
+    return K + (1.0/W)
  
