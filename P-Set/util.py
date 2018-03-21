@@ -147,4 +147,37 @@ def calculate_W(f, y):
 
 def calculate_KP(K, W):
     return K + (1.0/W)
- 
+
+def pretty_plot_classify(fig, axs, xlim=(-20,20), ylim=(-1.5,1.5), size=(10,10)):
+    plt.ylim(ylim)
+    plt.xlim(xlim)
+    fig.set_size_inches(size)
+    plt.show()
+
+def draw_latent_function(GPC, optimize_theta, kernel, x_new, x, y):
+    theta = optimize_theta(x, y, kernel, params_0=[0.4, 5], sigma_n=0.0)
+    f_bar, var = GPC(x_new, x, y, kernel, theta)
+
+    fig, axs = plt.subplots(1, 1)
+    for i in range(len(x)):
+        if y[i] > 0:
+            axs.scatter(x[i], y[i], 80, marker='+', color='g')
+        else:
+            axs.scatter(x[i], y[i], 80, marker='o', color='r')
+    axs.plot(x_new, f_bar,  color='k')
+    pretty_plot_classify(fig, axs)
+    return f_bar, var
+
+def draw_predictive_probabilities(f_bar, x_new, x, y):
+    prob = np.zeros(len(f_bar))
+    for i in range(len(f_bar)):
+        prob[i] = sigmoid(f_bar[i])
+
+    fig, axs = plt.subplots(1, 1)
+    for i in range(len(x)):
+        if y[i] > 0:
+            axs.scatter(x[i], y[i], 80, marker='+', color='g')
+        else:
+            axs.scatter(x[i], y[i], 80, marker='o', color='r')
+    axs.plot(x_new, prob,  color='k')
+    pretty_plot_classify(fig, axs)
