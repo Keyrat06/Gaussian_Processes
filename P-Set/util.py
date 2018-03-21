@@ -88,12 +88,12 @@ def scatter_raw_data_classification(x, y, sigma_n=0.1):
     
 def temperature_example(regression_GP, optimizer, kernal, params_0):
     np.random.seed(0)
-    sample_std = 5.0
+    sample_std = 2.0
     num_years = 2
     num_years_out = 1
     x = np.array(np.random.random(80 * num_years)  * 365 * num_years )
-    y = - 20 * np.cos(np.pi/365*2 * x) + np.random.normal(0,sample_std, len(x))
-    y_range = (5,95)
+    y = - 20 * np.cos(np.pi/365*2 * x) + 4 * np.sin(np.pi/12*x) + np.random.normal(0,sample_std, len(x))
+    y_range = (20,110)
     x_samples = np.linspace(0, 365*(num_years+num_years_out), 365 * (num_years+num_years_out))
     theta = optimizer(x, y, sample_std, kernal, params_0)
     y_samples, var = regression_GP(x_samples, x, y, kernal, theta)
@@ -109,7 +109,7 @@ def temperature_example(regression_GP, optimizer, kernal, params_0):
     ax.set_ylabel("Temperature")
     ax.set_xlabel("Date")
     months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
-    years = [2016 + i for i in range(num_years+num_years_out)]
+    years = [2016 + i for i in xrange(num_years+num_years_out)]
     every_other = 3
     i = 0
     dates = []

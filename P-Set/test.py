@@ -113,38 +113,86 @@ def test_regression_ouptimize_theta(regression_optimize_theta, kernel):
     target = np.array([1.39545862,  2.21679695, 0.1])
 
     assert np.allclose(theta, target), "wanted {}, got {}".format(target, theta)
+
+x_1 = np.random.choice(np.linspace(-10, -5, 20), 5, replace=False)
+x_2 = np.random.choice(np.linspace(-2.5, 2.5, 20), 5, replace=False)
+x_3 = np.random.choice(np.linspace(5, 10, 20), 5, replace=False)
+x_new = np.linspace(-15, 15, 50)
+x_data = np.concatenate((x_1, x_2, x_3), axis=0)
+y_data = -1 * np.ones(len(x_data))
+y_data[np.where(abs(x_data)<3)] = 1 
+theta_c = [0.4, 5, 0]
+
+def target_kernel(x0, x1, params, sigma_n):
+    diff = np.subtract.outer(x0, x1)
+    value = params[0]**2 * np.exp( -0.5 * (1.0/params[1]**2) * diff**2)
+    value[np.where(diff == 0.0)] += sigma_n**2
+    return value
+
+def target_get_Ks(x_new, x, kernel, theta):
+    K = kernel(x, x, theta[:-1], theta[-1]) # K
+    KS = kernel(x_new, x, theta[:-1], theta[-1]) # K*
+    KSS = kernel(x_new, x_new, theta[:-1], theta[-1]) # K**
+    return K, KS, KSS
+
+K_target, KS_target, KSS_target = target_get_Ks(x_new, x_data, target_kernel, theta_c)
+
+def target_sigmoid(x):
+    return 1./(1+np.exp(-x))
     
 def test_sigmoid(sigmoid):
     x = np.linspace(-5, -5, 100)
-    target = [1./(1+np.exp(-x_i)) for x_i in x]
+    target = [target_sigmoid(x_i) for x_i in x]
     actual = [sigmoid(x_i) for x_i in x]
     assert np.allclose(actual, target)
     x = np.linspace(-50, -5, 100)
-    target = [1./(1+np.exp(-x_i)) for x_i in x]
+    target = [target_sigmoid(x_i) for x_i in x]
     actual = [sigmoid(x_i) for x_i in x]
     assert np.allclose(actual, target)
     x = np.linspace(5, 50, 100)
-    target = [1./(1+np.exp(-x_i)) for x_i in x]
+    target = [target_sigmoid(x_i) for x_i in x]
     actual = [sigmoid(x_i) for x_i in x]
     assert np.allclose(actual, target)
     
+def target_find_f(K, y):
+    n = len(y) 
+    f = np.zeros(n)  
+    y_giv_f = np.zeros(n)
+    grad = np.zeros(n)
+    
+    for i in range(0, 100):
+        for j in range(n):
+            y_giv_f[j] = target_sigmoid(f[j]*y[j])
+            grad[j] = (1-y_giv_f[j])*y[j]
+        f = np.array(np.matmul(K, grad)).flatten()
+    for j in range(n):
+        y_giv_f[j] = target_sigmoid(f[j]*y[j])
+    return f, y_giv_f
+    
+def test_find_f(find_f, get_Ks, kernel):
+    target_f, target_y_giv_f = target_find_f(K_target, y_data)
+    K, KS, KSS = get_Ks(x_new, x_data, kernel, theta_c)
+    actual_f, actual_y_giv_f = find_f(K, y_data)
+    assert np.allclose(K_target, K)
+    assert np.allclose(target_f, actual_f)
+    assert np.allclose(target_y_giv_f, actual_y_giv_f)
+    return actual_f, actual_y_giv_f
+    
+def target_W(f, y):
+    n = len(y)
+    W = np.zeros(n)
+    for j in range(n):
+        sigmoid_v = target_sigmoid(f[j]*y[j])
+        W[j] = y[j]**2 * (1-sigmoid_v)*sigmoid_v
+    return W
     
 def test_calc_W(calc_W):
-    f = [5, 3, 3, 5, 4, -2, -3, -4, -3, -4]
-    y = [1, 1, 1, 1, 1, -1, -1, -1, -1, -1]
-    def sigmoid(x):
-        return 1./(1+np.exp(-x))
-    
-    def target_W():
-        n = len(y)
-        W = np.zeros(n)
-        for j in range(n):
-            sigmoid_v = sigmoid(f[j]*y[j])
-            W[j] = y[j]**2 * (1-sigmoid_v)*sigmoid_v
-        return W
-    target = target_W()
-    actual = calc_W(f, y)
+    f_target = target_find_f(K_target, y_data)
+    f_actual = test_find_f(find_f, K)
+    target = target_W(f_target, y_data)
+    actual = calc_W(f_actual, y_data)
     assert np.allclose(actual, target)
+
 
     
     
