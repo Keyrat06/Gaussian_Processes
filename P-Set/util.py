@@ -69,11 +69,11 @@ def get_sample_classification_data():
     y[np.where(abs(x)<3)] = 1
     return x, y
 
-def scatter_raw_data_classification(x, y, sigma_n=0.1):
+def scatter_raw_data_classification(x, y, y_label = "Y", x_label = "X", title = "Sample Data", sigma_n=0.1):
     fig, axs = plt.subplots(1, 1)
-    axs.set_ylabel("Y")
-    axs.set_xlabel("X")
-    axs.set_title("Sample Data")
+    axs.set_ylabel(y_label)
+    axs.set_xlabel(x_label)
+    axs.set_title(title)
     for i in range(len(x)):
         if y[i] > 0:
             axs.scatter(x[i], y[i], 50, marker='+', color='g')
@@ -125,4 +125,13 @@ def temperature_example(regression_GP, optimizer, kernal, params_0):
     fig.set_size_inches((20,8))
     plt.show()
         
+        
+def draw_sigmoid(sigmoid_function):    
+    x = np.linspace(-10, 10, 100)
+    y = sigmoid_function(x)
+    fig, axs = plt.subplots(1, 1)
+    axs.plot(x, y, 'r')
+    axs.set_ylabel("Sigmoid(X)")
+    axs.set_xlabel("X")
+    pretty_plot(fig, axs, xlim=(-10,10), ylim=(0,1))
  
