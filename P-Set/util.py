@@ -124,5 +124,5 @@ def temperature_example(regression_GP, optimizer, kernal, params_0):
     plt.ylim(y_range)
     fig.set_size_inches((20,8))
     plt.show()
-
+        
  
