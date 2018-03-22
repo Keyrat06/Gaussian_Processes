@@ -60,9 +60,9 @@ def solve_and_visualize(regression_GP, kernel, x, y, theta, x_range=None, y_rang
 
     
 def get_sample_classification_data():
-    x_1 = np.random.choice(np.linspace(-10, -5, 20), 5, replace=False)
+    x_1 = np.random.choice(np.linspace(-12.5, -7.5, 20), 10, replace=False)
     x_2 = np.random.choice(np.linspace(-2.5, 2.5, 20), 5, replace=False)
-    x_3 = np.random.choice(np.linspace(5, 10, 20), 5, replace=False)
+    x_3 = np.random.choice(np.linspace(7.5, 12.5, 20), 10, replace=False)
     x = np.concatenate((x_1, x_2, x_3), axis=0)
     y = -1 * np.ones(len(x))
     y[np.where(abs(x)<3)] = 1
@@ -143,10 +143,10 @@ def calculate_W(f, y):
     for j in range(n):
         sigmoid_v = sigmoid(f[j]*y[j])
         W[j] = y[j]**2 * (1-sigmoid_v)*sigmoid_v
-    return W
+    return np.diag(W)
 
 def calculate_KP(K, W):
-    return K + (1.0/W)
+    return K + np.linalg.inv(W)
 
 def pretty_plot_classify(fig, axs, xlim=(-20,20), ylim=(-1.5,1.5), size=(10,10)):
     plt.ylim(ylim)
@@ -154,8 +154,8 @@ def pretty_plot_classify(fig, axs, xlim=(-20,20), ylim=(-1.5,1.5), size=(10,10))
     fig.set_size_inches(size)
     plt.show()
 
-def draw_latent_function(GPC, optimize_theta, kernel, x_new, x, y):
-    theta = optimize_theta(x, y, kernel, params_0=[0.4, 5], sigma_n=0.0)
+def draw_latent_func(GPC, optimize_theta, kernel, x_new, x, y):
+    theta = optimize_theta(x, y, kernel, params_0=[0.1, 0.1], sigma_n=0.1)
     f_bar, var = GPC(x_new, x, y, kernel, theta)
 
     fig, axs = plt.subplots(1, 1)
@@ -181,3 +181,4 @@ def draw_predictive_probabilities(f_bar, x_new, x, y):
             axs.scatter(x[i], y[i], 80, marker='o', color='r')
     axs.plot(x_new, prob,  color='k')
     pretty_plot_classify(fig, axs)
+    
